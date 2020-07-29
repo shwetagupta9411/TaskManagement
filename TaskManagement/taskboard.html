@@ -1,0 +1,455 @@
+<html>
+<head>
+  <script src="/bootstrap/js/jquery-1.11.0.min.js"></script>
+  <script src="/bootstrap/js/fontawesome.js" data-auto-replace-svg="nest"></script>
+  <style>
+    body {
+      background: url('/bootstrap/image/bgimg.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .nav-link{
+      color: white !important;
+    }
+    .nav-link:hover{
+      color: wheat !important;
+    }
+    .name{
+      font-size: 1.5rem!important;
+      color:white;
+    }
+    .subtitle-header{
+      margin-top:-4%;
+      margin-bottom: -1%;
+    }
+    .black{
+      color: black;
+    }
+    .editIcon:hover{
+      color:blue;
+    }
+    .alert-align{
+      width: 50%;
+      margin-left: 23rem;
+    }
+  </style>
+  <script>
+    $(document).ready(function() {
+      $('.navbar-expand-lg').addClass("taskBackground")
+      $('.loginButton').removeClass("btn-outline-success")
+      $('.loginButton').addClass("btn-outline-info")
+      $('.alert').addClass("alert-align")
+      $(document).on("click", ".open-delTaskDialog", function (e) {
+           var tName = $(this).data('id');
+           $(".modal-body .tname").val( tName );
+           $(".delTask").html("Delete " + tName);
+      });
+      $('.statusCheck').on('change', function(e){
+        $('#checkModal').modal();
+        var tName = $(this).data('id');
+        $(".modal-body .tname-check").val( tName );
+        $(".modal-body .checkbovVal").val( e.target.checked );
+        if(e.target.checked){
+           $(".statusMsg").html("Are you sure you want to chnage the task status to <b>Completed</b>");
+         } else{
+           $(".statusMsg").html("Are you sure you want to chnage the task status to <b>Not Completed</b>");
+         }
+         $('.changestatusCancel').on('click', function(e){
+           location.reload()
+         })
+      });
+      $('.editTaskModal').on('click', function(e){
+        var description = $($(this).children(".editDescription")).val()
+        var taskname = $($(this).children(".editName")).val()
+        var duedate = $($(this).children(".editDuedate")).val()
+        var status = $.trim($($(this).children(".editStatus")).val())
+        var assignto = $.trim($($(this).children(".editAssignee")).val())
+        $(".modal-body .name").val( $.trim(taskname) );
+        $(".modal-body .name-hidden").val( $.trim(taskname) );
+        $(".modal-body .name").attr("disabled", "disabled");
+        $(".modal-body .description").val( $.trim(description) );
+        $(".modal-body .duedate").val($.trim(duedate.split(" ")[0]));
+        if(status.toLowerCase() == "completed"){
+            $(".modal-body .status-2").prop('checked', true);
+        }
+        else if(status.toLowerCase() == "not completed"){
+          $(".modal-body .status-1").prop('checked', true);
+        }
+        $(".modal-body .assignee").val($.trim(assignto));
+      })
+    })
+  </script>
+</head>
+
+<body class="bg-gradient-light">
+  {% include '_navbar.html' %}
+  {% include '_messages.html' %}
+  {% if user %}
+  <div class="row" style="margin-left:2%;margin-right:2%;margin-bottom: 2%;">
+    <div class="row mt-3">
+      <span class="badge name">{{board.boardTitle}}</span>
+      <button type="button" class="btn btn-light ml-3" data-toggle="modal" data-target="#boardDetail" data-whatever="@mdo"><i class="fas fa-info-circle"></i> Board Details</button>
+      <button type="button" class="btn btn-light ml-3" data-toggle="modal" data-target="#editBoard" data-whatever="@mdo"><i class="fas fa-edit"></i> Edit Board</button>
+      {% if board.owner == user.email() %}
+      <button type="button" class="btn btn-light ml-3" data-toggle="modal" data-target="#inviteUser" data-whatever="@mdo"><i class="fas fa-user-plus"></i> Invite User</button>
+      {% endif %}
+      <button type="button" class="btn btn-light ml-3" data-toggle="modal" data-target="#createTask" data-whatever="@mdo"><i class="fas fa-plus"></i> Add Task</button>
+      {% if board.owner == user.email() %}
+      <button type="button" class="btn btn-danger ml-3" data-toggle="modal" data-target="#deleteBoard" data-whatever="@mdo"><i class="fas fa-trash-alt"></i> Delete Board</button>
+      {% endif %}
+
+      <div class="modal fade" id="deleteBoard">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title deltask">Delete Board {{board.boardTitle}}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="/delete_task" method="get">
+                <input name="name" type="hidden" class="tname" >
+                <p>Are you sure you want to delete the Board?</p>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-danger" href="/delete_board/{{key_board}}">Delete</a>
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="boardDetail" tabindex="-1" role="dialog" aria-labelledby="inviteUser" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Board Details</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="name" class="col-form-label">Board Name:</label>
+                <label for="name" class="form-control">{{board.boardTitle}}</label>
+              </div>
+              <div class="form-group">
+                <label for="activeTask" class="col-form-label">Active Tasks:</label>
+                <label for="activeTask" class="form-control">{{actTask}}</label>
+              </div>
+              <div class="form-group">
+                <label for="compTask" class="col-form-label">Completed Tasks:</label>
+                <label for="compTask" class="form-control">{{cmpTask}}</label>
+              </div>
+              <div class="form-group">
+                <label for="totalTask" class="col-form-label">Total Tasks:</label>
+                <label for="totalTask" class="form-control">{{taskLen}}</label>
+              </div>
+              <div class="form-group">
+                <label for="compToday" class="col-form-label">Total Completed Today:</label>
+                <label for="compToday" class="form-control">{{cmpToday}}</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="editBoard" tabindex="-1" role="dialog" aria-labelledby="inviteUser" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Board</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="/edit_board" method="post">
+                <div class="form-group">
+                  <label for="invite-title" class="col-form-label">Board Title:</label>
+                  <input name="board_url" type="hidden" value="{{ board_url }}">
+                  <input name="key_board" type="hidden" value="{{ key_board }}">
+                  <input name="boardName" class="form-control"value="{{board.boardTitle}}" required>
+                </div>
+                {% if board.owner == user.email() %}
+                <div class="form-group">
+                  <label for="invite-title" class="col-form-label">Remove User:</label>
+                  <select class="form-control" name="userRemove">
+                    {% for bUser in board.users %}
+                    <option value="" disabled selected hidden>Select a user to remove</option>
+                    {% if bUser.email != board.owner %}
+                    <option value="{{bUser.email}}">{{bUser.email}}</option>
+                    {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </form>
+            </div>
+            <div class="modal-footer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="inviteUser" tabindex="-1" role="dialog" aria-labelledby="inviteUser" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="inviteUser">Invite User</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="/board_invite" method="post">
+                <div class="form-group">
+                  <label for="invite-title" class="col-form-label">Enter User Id:</label>
+                  <input name="board_url" type="hidden" value="{{ board_url }}">
+                  <input name="key_board" type="hidden" value="{{ key_board }}">
+                  <input name="email_id" type="email" class="form-control" id="email" placeholder="Add user email" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Invite</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </form>
+            </div>
+            <div class="modal-footer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="createTask" tabindex="-1" role="dialog" aria-labelledby="createTaskLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="createTaskLabel">Add Task</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="/create_task" method="post">
+                <input name="board_url" type="hidden" value="{{board_url}}">
+                <input name="key_board" type="hidden" value="{{key_board}}">
+
+                <div class="form-group">
+                  <label for="board-title" class="col-form-label">Task Title:</label>
+                  <input name="taskName" type="text" class="form-control" id="task-name" placeholder="Add Task Name" required>
+                </div>
+                <div class="form-group">
+                  <label for="due-date" class="col-form-label">Due Date:</label>
+                  <input class="form-control" type="date" name="dueDate" required>
+                </div>
+                <div class="form-group">
+                  <label for="description" class="col-form-label">Description:</label>
+                  <textarea class="form-control" rows="5" placeholder="Task Description" name="description" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="status" class="col-form-label">Status:</label>
+                  <div class="form-group">
+                    <div class="form-check-inline">
+                      <label class="form-check-label"><input type="radio" class="form-check-input" name="status" checked value="not completed">Not Completed</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="assignto" class="col-form-label">Assign To:</label>
+                    <select class="form-control" name="assignee" required>
+                      {% for bUser in board.users %}
+                      <option value="{{bUser.email}}">{{bUser.email}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Task</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class=" row col-sm-12 mt-4">
+    {% if board.tasks %}
+    {% for task in board.tasks %}
+    <div class="card mt-3" style="margin-left: 2rem;width: 18rem; background: #ffffffbd;">
+      <div class="card-header black">
+        {% set title = task.taskTitle.capitalize() %}
+        {% set desc = task.description.capitalize() %}
+        <h5>{{title}}</h5>
+        <p class="small subtitle-header">Assign To :
+          {% if task.assignee == "Unassigned" %}
+          <span class="mt-1 badge badge-danger" style="font-size: 90%;">{{task.assignee}}</span>
+          {% else %}
+          <span class="mt-1 badge badge-info" style="font-size: 90%;">{{task.assignee}}</span>
+          {% endif %}
+        </p>
+
+        <a class="float-right editIcon editTaskModal black" href="#editTask" data-toggle="modal" data-id="" style="margin-top: -12%;">
+          <i class="fas fa-edit"></i>
+          <input name="editName" class="editName" type="hidden" value="{{task.taskTitle}}">
+          <input name="editDescription" type="hidden" class="editDescription" value="{{task.description}}">
+          <input name="editDuedate" class="editDuedate" type="hidden" value="{{task.dueDate}}">
+          <input name="editStatus" class="editStatus" type="hidden" value="{{task.status}}">
+          <input name="editAssignee" class="editAssignee" type="hidden" value="{{task.assignee}}">
+        </a>
+
+        <a data-toggle="modal" data-id="{{task.taskTitle}}" class="open-delTaskDialog float-right editIcon black" style="margin-right: 13%;margin-top: -12%;" href="#deleteTask">
+          <i class="fas fa-trash-alt"></i>
+        </a>
+
+        <div class="modal fade" id="editTask" tabindex="-1" role="dialog" aria-labelledby="createTaskLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editTaskLabel">Edit Task</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form action="/update_task" method="post">
+                  <input name="board_url" type="hidden" value="{{board_url}}">
+                  <input name="key_board" type="hidden" value="{{key_board}}">
+
+                  <div class="form-group">
+                    <label for="board-title" class="col-form-label">Task Title:</label>
+                    <input type="text" class="form-control name" placeholder="Add Task Name" style="font-size:1rem!important">
+                    <input name="taskName" type="hidden" class="name-hidden">
+                  </div>
+                  <div class="form-group">
+                    <label for="due-date" class="col-form-label">Due Date:</label>
+                    <input class="form-control duedate" type="date" name="dueDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="description" class="col-form-label">Description:</label>
+                    <textarea class="form-control description" rows="5" placeholder="Task Description" name="description" required></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="status" class="col-form-label">Status:</label>
+                    <div class="form-group">
+                      <div class="form-check-inline">
+                        <label class="form-check-label"><input type="radio" class="form-check-input status-1" name="status" value="not completed">Not Completed</label>
+                        <label class="form-check-label"><input type="radio" class="form-check-input ml-3 status-2" name="status" value="completed">Completed</label>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="assignto" class="col-form-label">Assign To:</label>
+                      <select class="form-control assignee" name="assignee" required>
+                        {% for bUser in board.users %}
+                        <option value="{{bUser.email}}">{{bUser.email}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Update Task</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </form>
+              </div>
+              <div class="modal-footer">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="deleteTask">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title deltask">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form action="/delete_task" method="get">
+                  <input name="board_url" type="hidden" value="{{board_url}}">
+                  <input name="key_board" type="hidden" value="{{key_board}}">
+                  <input name="name" type="hidden" class="tname" >
+                  <p>Are you sure you want to delete the task?</p>
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                </form>
+              </div>
+              <div class="modal-footer">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body black">
+        <h6 class="card-title">Task Description:</h6>
+        <p class="card-text">{{desc}}</p>
+      </div>
+      <div class="card-footer black subtitle-header small">
+        <div class="form-inline">
+          <div class="form-group" >
+            <label for="dueDate" class="mr-1">Due Date:</label>
+            <label for="dueDate" class="col-form-label" style="color:red;font-weight:500;">{{task.dueDate.strftime('%Y/%m/%d')}}</label>
+          </div>
+          <div class="form-check ml-2">
+            {% if task.status == "completed" %}
+            <input type="checkbox" class="form-check-input statusCheck" id="statusCheck" data-id="{{task.taskTitle}}" checked>
+            {% else %}
+            <input type="checkbox" class="form-check-input statusCheck" id="statusCheck" data-id="{{task.taskTitle}}">
+            {% endif %}
+            <label class="form-check-label" for="statusCheck">Completed</label>
+          </div>
+          {% if task.status == "completed" %}
+          <div class="form-group" >
+            <label for="completedAt" class="mr-1">Conpleted On:</label>
+            <label for="completedAt" class="col-form-label" style="color:Green;font-weight:500;">{{task.completionDate.strftime("%Y/%m/%d %H:%M:%S")}}</label>
+          </div>
+          {% endif %}
+          <div class="modal fade checkModal" id="checkModal">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Change the status of task.</h5>
+                  <button type="button" class="close changestatusCancel" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="/update_status" method="post">
+                    <input name="board_url" type="hidden" value="{{board_url}}">
+                    <input name="key_board" type="hidden" value="{{key_board}}">
+                    <input name="name" type="hidden" class="tname-check">
+                    <input name="checkbovVal" type="hidden" class="checkbovVal">
+                    <p class="statusMsg"></p>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-danger changestatusCancel" data-dismiss="modal">Cancel</button>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="card" style="padding:5rem;width:100%;background: #ffffffbd;">
+      <main role="main" class="inner cover black">
+        <h1 class="cover-heading">No Tasks created!</h1>
+        <p class="lead">Please created a task.</p>
+      </main>
+      <div class="text-center">
+        <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-target="#createTask" data-whatever="@mdo"><i class="fas fa-plus"></i> Add Task</button>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+  {% else %}
+  <div class="text-center">
+    <a class="btn btn-primary float-left mt-3" href="{{  url  }}"><i class="fas fa-sign-in-alt"></i> Login to Application</a>
+  </div>
+  {% endif %}
+</body>
+<html>

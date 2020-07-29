@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+
+<head>
+  <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+  <script src="/bootstrap/js/fontawesome.js" data-auto-replace-svg="nest"></script>
+</head>
+
+<body>
+  {% block content %}
+  {% include '_navbar.html' %}
+  {% endblock %}
+  <div class="container">
+    <br />
+    {% include '_messages.html' %}
+
+    {% if user %}
+      {% if ex_user %}
+        </br>
+        <div class="card" style="padding:5rem">
+          <main role="main" class="inner cover">
+            <h1 class="cover-heading">Hello {{ user.email() }}!</h1>
+            <p class="lead">Welcome back to the application!</p>
+          </main>
+          <div class="text-center">
+            <a class="nav-link btn btn-primary float-left" href="/boards"><i class="fas fa-clipboard"></i> Boards <span class="sr-only">(current)</span></a>
+          </div>
+        </div>
+
+      {% else %}
+        </br>
+        <div class="card" style="padding:5rem">
+          <main role="main" class="inner cover">
+            <h1 class="cover-heading">Hello {{ user.email() }}!</h1>
+            <p class="lead">Welcome to the application! Please create a Task Board to use the app.</p>
+          </main>
+          <div class="text-center">
+            <a href="#" class="nav-link btn btn-primary float-left" data-toggle="modal" data-target="#createBoard" data-whatever="@mdo"><i class="fas fa-plus"></i> Create Task Board</a>
+          </div>
+        </div>
+      {% endif %}
+    {% else %}
+      <br>
+      <div class="card" style="padding:5rem">
+        <main role="main" class="inner cover">
+          <h1 class="cover-heading">Hello Guest! Welcome to the application!</h1>
+          <p class="lead">Please login to create a Task Board.</p>
+        </main>
+        <div class="text-center">
+          <a class="btn btn-primary float-left" href="{{  url  }}"><i class="fas fa-sign-in-alt"></i> Login to Application</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</body>
+
+</html>
+{% endautoescape %}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <script src="/bootstrap/js/fontawesome.js" data-auto-replace-svg="nest"></script>
+</head>
+<body>
+  {% include '_navbar.html' %}
+  {% if user %}
+  <div class="container">
+    <br />
+    {% include '_messages.html' %}
+    <br />
+    <div class="container text-primary">
+      <div style="border-bottom: 1px solid #eee;">
+        <h2><i class="fas fa-clipboard"></i> Task Boards</h2>
+      </div>
+    </div>
+    <br/>
+    <div class="card" style="padding:1rem">
+      {% if tasksBoards|length > 0 %}
+      <table class="table table-hover" id="example" >
+        <thead class="thead-light">
+          <tr>
+            <th>Boards</th>
+            <th>Owner</th>
+          <tr>
+        </thead>
+        <tbody>
+          {% for board in tasksBoards %}
+          <tr>
+            <td>
+              {% if board %}
+              <a href="/board/{{board.key.id()}}"> {{ board.boardTitle }}</a> </td>
+              {% endif %}
+            <td>
+              {{board.owner}}
+              {% if user.email() == board.owner %}
+              <span class="ml-3 badge badge-primary">Board Admin</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="text-center">
+        <p>There are no boards present. Please create a board.</p>
+        <a href="#" class="nav-link btn btn-primary text-center" style="display: inline-block;" data-toggle="modal" data-target="#createBoard" data-whatever="@mdo"><i class="fas fa-plus"></i> Create Task Board</a>
+      </div>
+      {% endif %}
+      <hr>
+    </div>
+
+
+    <a href="{{ url|safe }}">{{ url_linktext }}</a>
+  </div>
+  {% else %}
+  <br>
+  <div class="container">
+    <div class="card" style="padding:5rem">
+      <main role="main" class="inner cover">
+        <h1 class="cover-heading">Hello Guest! Welcome to the application!</h1>
+        <p class="lead">Please login to create a Task Board.</p>
+      </main>
+      <div class="text-center">
+        <a class="btn btn-primary float-left mt-3" href="{{  url  }}"><i class="fas fa-sign-in-alt"></i> Login to Application</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</body>
+
+</html>
+{% endautoescape %}

@@ -1,0 +1,52 @@
+1. Bracket 1 (10%)
+• Write the shell of an application that has a working login/logout
+service.
+• Add in a datastore object to represent an EV it should have attributes
+to represent.
+– name, manufacturer, year, battery size (Kwh), WLTP range
+(Km), cost, power (Kw).
+2. Bracket 2 (20%)
+• Add in a seperate page for adding an ev to the database.
+– Bracket failure if ev with same manufacturer, name, and year
+can be added.
+– This should only be accessible to a logged in user bracket failure
+if not.
+3. Bracket 3 (30%)
+• Add in a form for querying the EV database. it should be able to
+filter on all attributes.
+– Attributes that are string based should have a single input string.
+– Attributes that are numerical should specify a range with upper
+and lower limit (limits included in search).
+– This should be accessible regardless of login status.
+– Display a list of EVs that satisfy the query as a list of hyperlinks.
+– If nothing selected on the form then show full EV list
+4. Bracket 4 (40%)
+• When a hyperlink has been clicked go to a seperate page showing the
+information of that EV.
+– Add the ability to edit that EV.
+– Add the ability to delete that EV (bracket failure if edit or delete
+does not function properly).
+– Editing and deleting should only be available to a logged in user.
+5. Bracket 5 (50%)
+• On a seperate page add in a comparison feature.
+– This should take 2 or more EVs and display all of their attributes
+side by size.
+– Bracket failure if 0 or 1 EVs can be selected and comparison
+triggered.
+– For all attributes show green for highest value and red for lowest.
+do the opposite for cost.
+– Names should still be a hyperlink that leads to the information
+of that EV.
+4
+6. Bracket 6 (60%)
+• Add in the ability for a logged in user to submit a review of an EV
+including a text field (limited to 1,000 characters) and a rating out
+of 10.
+• The reviews should be visible to all users even if logged out
+7. Bracket 7 (70%)
+• On the information page for an EV this should show the average
+score of all reviews.
+• On the information page for an EV the reviews should be shown in
+reverse chronological order.
+• On the comparison page for EVs the average score should be added
+in and highlighted green if highest and red if lowest.

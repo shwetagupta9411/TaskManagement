@@ -1,0 +1,74 @@
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <script src="/bootstrap/js/jquery-1.11.0.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<style>
+  .taskBackground{
+    background: rgba(0,0,0,.32)!important;
+  }
+</style>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+    <a class="navbar-brand" href="/">App for Task Management</a>
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      {% if user %}
+      <li class="nav-item">
+        <a class="nav-link" href="/boards"><i class="fas fa-clipboard"></i> Boards <span class="sr-only">(current)</span></a>
+      </li>
+      {% endif %}
+      {% if user %}
+      <li class="nav-item">
+        <a href="#" class="nav-link" data-toggle="modal" data-target="#createBoard" data-whatever="@mdo"><i class="fas fa-plus"></i> Create Task Board</a>
+        <div class="modal fade" id="createBoard" tabindex="-1" role="dialog" aria-labelledby="createBoardLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="createBoardLabel">Create Board</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form action="/create_board" method="post">
+                  <div class="form-group">
+                    <label for="board-title" class="col-form-label">Board Title:</label>
+                    <input name="title" type="text" class="form-control" id="board-title" placeholder="Add Board Title" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Create</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </form>
+              </div>
+              <div class="modal-footer">
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+      {% endif %}
+    </ul>
+    <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown">
+        <button class="btn btn-outline-success btn-sm loginButton" type="button">
+          {% if user %}
+          <a class="nav-link dropdown-toggle" href="{{url}}" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white">{{user.email()|safe}}</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="{{url}}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </div>
+          {% else %}
+          <a class="nav-link" href="{{url}}" style="color:white"><i class="fas fa-sign-in-alt"></i> {{url_string|safe}}</a>
+          {% endif %}
+        </button>
+
+      </li>
+    </ul>
+  </div>
+</nav>
+
+</body>
+</html>
