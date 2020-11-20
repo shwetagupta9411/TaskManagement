@@ -1,52 +1,30 @@
 1. Bracket 1 (10%)
-• Write the shell of an application that has a working login/logout
-service.
-• Add in a datastore object to represent an EV it should have attributes
-to represent.
-– name, manufacturer, year, battery size (Kwh), WLTP range
-(Km), cost, power (Kw).
+• Write the shell of an application that has a working login/logout service.
+• Write a model to describe a task board (collection of tasks and users), a task, and a user.
+  – Create a new user object when a user logs in for the first time. – Make sure appropriate types are used.
+  – Make sure proper parent child relationships are used.
 2. Bracket 2 (20%)
-• Add in a seperate page for adding an ev to the database.
-– Bracket failure if ev with same manufacturer, name, and year
-can be added.
-– This should only be accessible to a logged in user bracket failure
-if not.
+• Add the ability for a user to create a task board. If a board is created it should be visible to the created user.
+• Add the ability for a user to click into a task board. This should go to a separate page and display the task board.
 3. Bracket 3 (30%)
-• Add in a form for querying the EV database. it should be able to
-filter on all attributes.
-– Attributes that are string based should have a single input string.
-– Attributes that are numerical should specify a range with upper
-and lower limit (limits included in search).
-– This should be accessible regardless of login status.
-– Display a list of EVs that satisfy the query as a list of hyperlinks.
-– If nothing selected on the form then show full EV list
+• Add the ability to invite a user to a task board.
+  – This should be automatically added and visible to that user. – Only the creator of the board can add a user to that board
+• Add the ability to add a task to a task board. It should not permit tasks with the same name (bracket failure if it does).
+  – A task should contain a title, a due date, and a checkbox or sim- ilar to mark completion (should be defaulted to not complete).
+  – It should be possible to assign the task to one of the users that is currently on the board.
 4. Bracket 4 (40%)
-• When a hyperlink has been clicked go to a seperate page showing the
-information of that EV.
-– Add the ability to edit that EV.
-– Add the ability to delete that EV (bracket failure if edit or delete
-does not function properly).
-– Editing and deleting should only be available to a logged in user.
+• Modify the task board list to include boards that a user has been added to.
+• On the board add in the ability to check a task. If the task is checked it should be marked as completed and a date and time marking com- pletion should be displayed and persisted.
+• Add in the ability to edit and delete tasks for anyone who is a member of the board.
 5. Bracket 5 (50%)
-• On a seperate page add in a comparison feature.
-– This should take 2 or more EVs and display all of their attributes
-side by size.
-– Bracket failure if 0 or 1 EVs can be selected and comparison
-triggered.
-– For all attributes show green for highest value and red for lowest.
-do the opposite for cost.
-– Names should still be a hyperlink that leads to the information
-of that EV.
-4
+• Add the ability to edit a task board for removing users and also renaming the board.
+• Add the ability to remove a user from a taskboard.
+  – If a user has been removed from a board then mark all of their tasks as unassigned and highlight them red.
+  – The user should not be able to see the board anymore.
+  – Only the creator of the board has the ability to remove a user from the board
 6. Bracket 6 (60%)
-• Add in the ability for a logged in user to submit a review of an EV
-including a text field (limited to 1,000 characters) and a rating out
-of 10.
-• The reviews should be visible to all users even if logged out
+• Add in a marker to indicate if a user is the creator of a board on the task board list.
+• If an unassigned task is then edited and assigned another user drop the red highlighting.
+• Add in counters to display the number of active tasks, number of complete tasks, total tasks, and total completed today.
 7. Bracket 7 (70%)
-• On the information page for an EV this should show the average
-score of all reviews.
-• On the information page for an EV the reviews should be shown in
-reverse chronological order.
-• On the comparison page for EVs the average score should be added
-in and highlighted green if highest and red if lowest.
+• Add the ability to remove a task board this should only be done by the creating user and only if all users and tasks have been removed.
